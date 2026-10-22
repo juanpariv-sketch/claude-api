@@ -20,6 +20,7 @@ def chat(messages):
         max_tokens=1000,
         messages=messages,
     )
+    print(message)
     return message.content[0].text
 
 # Start with an empty message list

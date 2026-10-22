@@ -1,0 +1,35 @@
+Message(
+    id='msg_011CgFy34an9e1SxNxMZJNPd',
+    container=None, 
+    content=[
+        TextBlock(
+            citations=None, 
+            text='```json\n[\n    {\n        "task": "Write a Python function that takes an S3 bucket name and returns the total number of objects stored in that bucket, using boto3 and handling pagination with a paginator."\n    },\n    {\n        "task": "Write a JSON IAM policy document that allows read-only access (s3:GetObject and s3:ListBucket) to the bucket \'example-reports-bucket\' and its objects, and denies all actions on the bucket prefix \'confidential/\'."\n    },\n    {\n        "task": "Write a regular expression that matches valid AWS EC2 instance IDs (for example, i-0abcd1234efgh5678 or i-1234567890abcdef0), which begin with \'i-\' followed by either 8 or 17 lowercase hexadecimal characters."\n    }\n]\n```',
+            type='text'
+            )
+        ],
+    diagnostics=None,
+    model='claude-haiku-5-5',
+    role='assistant',
+    stop_details=None,
+    stop_reason='end_turn',
+    stop_sequence=None,
+    type='message',
+    usage=Usage(
+        cache_creation=CacheCreation(
+            ephemeral_1h_input_tokens=0,
+            ephemeral_5m_input_tokens=0
+            ),
+        cache_creation_input_tokens=0,
+        cache_read_input_tokens=0,
+        inference_geo='global',
+        input_tokens=211,
+        output_tokens=265,
+        output_tokens_details=OutputTokensDetails(
+            thinking_tokens=0
+            ),
+        server_tool_use=None,
+        service_tier='standard',
+        speed='standard'
+        )
+    )
