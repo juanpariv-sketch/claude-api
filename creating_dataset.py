@@ -72,4 +72,6 @@ Please generate 3 objects.
     return json.loads(match.group(1))
 
 dataset = generate_dataset()
-print(dataset)
+#print(dataset)
+with open("dataset.json","w") as f:
+    json.dump(dataset, f, indent=4)

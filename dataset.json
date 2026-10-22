@@ -1,0 +1,11 @@
+[
+    {
+        "task": "Write a Python function that takes an S3 object key and returns the file extension in lowercase. If the key has no extension, return an empty string. For example, 'logs/2024/app.LOG' should return 'log' and 'backups/data' should return ''."
+    },
+    {
+        "task": "Write a JSON IAM policy that allows read-only access (s3:GetObject and s3:ListBucket) to the S3 bucket named 'analytics-reports' and all objects inside it, and denies all actions when the request does not use TLS (aws:SecureTransport is false)."
+    },
+    {
+        "task": "Write a regular expression that matches a valid AWS IAM role ARN in the format arn:aws:iam::<12-digit account ID>:role/<role name>, where the role name may contain letters, numbers, plus signs, equals signs, commas, periods, at signs, underscores, hyphens, and forward slashes (for paths). The regex should capture the account ID and the role name as separate groups."
+    }
+]
