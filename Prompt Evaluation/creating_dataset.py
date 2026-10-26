@@ -65,6 +65,8 @@ Please generate 3 objects.
     add_user_message(messages, prompt)
     text = chat(messages)
     #print(text)
+
+    #This is temporal solution to get the JSON format from the respones. Structured output is the best and future solution.
     match = re.search(r"```(?:json)?\s*(.*?)\s*```", text, re.DOTALL | re.IGNORECASE)
     if not re.match:
         raise ValueError("No JSON code block found")
