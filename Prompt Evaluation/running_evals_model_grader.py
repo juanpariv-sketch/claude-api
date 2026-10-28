@@ -87,7 +87,7 @@ Example response shape:
     messages = []
     add_user_message(messages, eval_prompt)
     eval_text = chat(messages)
-    print(eval_text)
+    #print(eval_text)
 
     #This is temporal solution to get the JSON format from the respones. Structured output is the best and future solution.
     #match = re.search(r"```(?:json)?\s*(.*?)\s*```", eval_text, re.DOTALL | re.IGNORECASE)
@@ -100,8 +100,6 @@ Example response shape:
 def run_test_case(test_case):
     """Calls run_prompt, then grades the result"""
     output = run_prompt(test_case)
-    
-    # TODO - Grading
     model_grade = grade_by_model(test_case, output)
     score = model_grade["score"]
     reasoning = model_grade["reasoning"]
