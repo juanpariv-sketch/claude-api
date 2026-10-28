@@ -1,0 +1,17 @@
+[
+    {
+        "task": "Write a Python function that takes a dictionary shaped like the response from boto3's EC2 `describe_instances` call and returns a list of instance IDs whose state name is 'running'. Instances are nested under 'Reservations' -> 'Instances'.",
+        "format": "python",
+        "solution_criteria": "Function iterates over Reservations and then Instances, safely handles empty Reservations lists, filters on State['Name'] == 'running', returns only the InstanceId strings, and does not make any AWS API calls or require boto3 to be installed."
+    },
+    {
+        "task": "Produce a JSON IAM policy document that grants read-only access (s3:GetObject and s3:ListBucket) to the S3 bucket 'example-reports-bucket' and its objects, and nothing else.",
+        "format": "json",
+        "solution_criteria": "Valid IAM policy JSON with a Version of '2012-10-17', a Statement with Effect 'Allow', and Actions limited to s3:GetObject and s3:ListBucket. Resources must include both 'arn:aws:s3:::example-reports-bucket' (for ListBucket) and 'arn:aws:s3:::example-reports-bucket/*' (for GetObject). No wildcard actions or resources outside this bucket."
+    },
+    {
+        "task": "Write a regular expression that matches AWS access key IDs, which begin with the prefix 'AKIA' followed by exactly 16 uppercase letters or digits, and that matches only when the key is a standalone token (not part of a longer alphanumeric string).",
+        "format": "regex",
+        "solution_criteria": "Pattern matches 'AKIAIOSFODNN7EXAMPLE' and rejects strings with lowercase letters, fewer or more than 16 characters after 'AKIA', or keys embedded within longer alphanumeric runs. Uses word boundaries or equivalent anchoring, and the pattern is valid under standard PCRE/Python re syntax."
+    }
+]
