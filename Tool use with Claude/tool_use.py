@@ -207,4 +207,8 @@ response = client.messages.create(
     tools=[get_current_date_time_schema],
 )
 
-print(response) 
+messages.append({
+    "role": "assistant",
+    "content": response.content
+})
+
