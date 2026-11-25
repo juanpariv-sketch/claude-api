@@ -212,3 +212,30 @@ messages.append({
     "content": response.content
 })
 
+#print(response)
+#print(messages)
+
+
+result = get_current_date_time(**response.content[0].input)
+#print(result)
+
+messages.append({
+    "role": "user",
+    "content": [
+        {
+            "type": "tool_result",
+            "tool_use_id": response.content[0].id,
+            "content": result,
+            "is_error": False
+        }
+    ] 
+})
+
+response2 = client.messages.create(
+    model=model,
+    max_tokens=1000,
+    messages=messages,
+    tools=[get_current_date_time_schema],
+)
+
+print(response2)
