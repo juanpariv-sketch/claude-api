@@ -17,20 +17,22 @@ def add_assistant_message(messages, text):
     messages.append(assistant_message)
 
 
-def chat(messages, system=None, temperature=1.0, stop_sequences=[]):
+def chat(messages, system=None):
     params = {
         "model": model,
         "max_tokens": 1000,
         "messages": messages,
-        "temperature": temperature,
-        "stop_sequences": stop_sequences,
     }
 
     if system:
         params["system"] = system
 
-    message = client.messages.create(**params)
-    return message.content[0].text
+    response = client.messages.create(**params)
+    #print(response)
+
+    for block in response.content:
+        if block.type == "text":
+            return block.text
 
 # Tools and Schemas
 
@@ -165,3 +167,44 @@ batch_tool_schema = {
 }
 
 pass
+
+from anthropic.types import ToolParam
+
+def get_current_date_time(date_format="%Y-%m-%d %H:%M:%S"):
+    """Returns the current date and time in the specified format."""
+    if not date_format:
+        raise ValueError("Date format cannot be empty")
+    return datetime.now().strftime(date_format)
+
+get_current_date_time_schema = ToolParam({
+    "name": "get_current_date_time",
+    "description": "Get the current date and time in the specified format.",
+    "input_schema": {
+        "type": "object",
+        "properties": {
+            "date_format": {
+                "type": "string",
+                "description": "The format in which to return the current date and time, using Python's strftime directives. For example, '%Y-%m-%d %H:%M:%S' for '2025-04-03 10:30:00'.",
+                "default": "%Y-%m-%d %H:%M:%S"
+            }
+        },
+        "required": []
+    }
+})
+
+messages = []
+messages.append(
+    {
+        "role": "user",
+        "content": "What is the exact time right now, formatted as HH:MM:SS?"
+    }
+)
+
+response = client.messages.create(
+    model=model,
+    max_tokens=1000,
+    messages=messages,
+    tools=[get_current_date_time_schema],
+)
+
+print(response) 
