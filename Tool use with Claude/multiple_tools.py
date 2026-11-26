@@ -1,5 +1,6 @@
 from dotenv import load_dotenv
 from anthropic import Anthropic
+import json
 
 load_dotenv()
 
@@ -7,17 +8,23 @@ client = Anthropic()
 model = "claude-haiku-5-5"
 
 # Helper functions
-def add_user_message(messages, text):
-    user_message = {"role": "user", "content": text}
+from anthropic.types import Message
+def add_user_message(messages, message):
+    user_message = {
+        "role": "user",
+        "content": message.content if isinstance(message, Message) else message
+    }
     messages.append(user_message)
 
-
-def add_assistant_message(messages, text):
-    assistant_message = {"role": "assistant", "content": text}
+def add_assistant_message(messages, message):
+    assistant_message = {
+        "role": "assistant",
+        "content": message.content if isinstance(message, Message) else message
+    }
     messages.append(assistant_message)
 
 
-def chat(messages, system=None):
+def chat(messages, system=None, tools=None):
     params = {
         "model": model,
         "max_tokens": 1000,
@@ -27,12 +34,64 @@ def chat(messages, system=None):
     if system:
         params["system"] = system
 
-    response = client.messages.create(**params)
-    #print(response)
+    if tools:
+        params["tools"] = tools
 
-    for block in response.content:
-        if block.type == "text":
-            return block.text
+    response = client.messages.create(**params)
+
+    return response
+
+def text_from_message(message):
+    return "\n".join(
+        [block.text for block in message.content if block.type == "text"]
+    )
+
+def run_tool(tool_name, tool_input):
+    if tool_name == "get_current_date_time":
+        return get_current_date_time(**tool_input)
+
+def run_tools(message):
+    tool_requests = [
+        block for block in message.content if block.type == "tool_use"
+    ]
+
+    tool_result_blocks = []
+
+    for tool_request in tool_requests:
+        try:
+            tool_output = run_tool(tool_request.name, tool_request.input)
+            tool_result_block = {
+                "type": "tool_result",
+                "tool_use_id": tool_request.id,
+                "content": json.dumps(tool_output),
+                "is_error": False,
+            }
+
+        except Exception as e:
+            tool_result_block = {
+                "type": "tool_result",
+                "tool_use_id": tool_request.id,
+                "content": f"Error: {e}",
+                "is_error": True,
+            }
+
+        tool_result_blocks.append(tool_result_block)
+
+    return tool_result_blocks
+ 
+def run_conversation(messages):
+    while True:
+        response = chat(messages, tools=[get_current_date_time_schema])
+        add_assistant_message(messages, response)
+        print(text_from_message(response))
+
+        if response.stop_reason != "tool_use":
+            break
+
+        tool_results = run_tools(response)
+        add_user_message(messages, tool_results)
+
+    return messages
 
 # Tools and Schemas
 
@@ -166,8 +225,6 @@ batch_tool_schema = {
     },
 }
 
-pass
-
 from anthropic.types import ToolParam
 
 def get_current_date_time(date_format="%Y-%m-%d %H:%M:%S"):
@@ -193,49 +250,6 @@ get_current_date_time_schema = ToolParam({
 })
 
 messages = []
-messages.append(
-    {
-        "role": "user",
-        "content": "What is the exact time right now, formatted as HH:MM:SS?"
-    }
-)
+add_user_message(messages, "What is the exact time right now, formatted as HH:MM?, Also, what is the current time in SS format?")
 
-response = client.messages.create(
-    model=model,
-    max_tokens=1000,
-    messages=messages,
-    tools=[get_current_date_time_schema],
-)
-
-messages.append({
-    "role": "assistant",
-    "content": response.content
-})
-
-#print(response)
-#print(messages)
-
-
-result = get_current_date_time(**response.content[0].input)
-#print(result)
-
-messages.append({
-    "role": "user",
-    "content": [
-        {
-            "type": "tool_result",
-            "tool_use_id": response.content[0].id,
-            "content": result,
-            "is_error": False
-        }
-    ] 
-})
-
-response2 = client.messages.create(
-    model=model,
-    max_tokens=1000,
-    messages=messages,
-    tools=[get_current_date_time_schema],
-)
-
-print(response2)
+run_conversation(messages)
