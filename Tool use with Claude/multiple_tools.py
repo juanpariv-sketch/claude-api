@@ -1,6 +1,7 @@
 from dotenv import load_dotenv
 from anthropic import Anthropic
 import json
+from anthropic.types import ToolParam
 
 load_dotenv()
 
@@ -49,6 +50,10 @@ def text_from_message(message):
 def run_tool(tool_name, tool_input):
     if tool_name == "get_current_date_time":
         return get_current_date_time(**tool_input)
+    elif tool_name == "add_duration_to_datetime":
+        return add_duration_to_datetime(**tool_input)
+    elif tool_name == "set_reminder":
+        return set_reminder(**tool_input)
 
 def run_tools(message):
     tool_requests = [
@@ -81,7 +86,11 @@ def run_tools(message):
  
 def run_conversation(messages):
     while True:
-        response = chat(messages, tools=[get_current_date_time_schema])
+        response = chat(messages, tools=[
+            get_current_date_time_schema,
+            add_duration_to_datetime_schema,
+            set_reminder_schema
+        ])
         add_assistant_message(messages, response)
         print(text_from_message(response))
 
@@ -96,7 +105,6 @@ def run_conversation(messages):
 # Tools and Schemas
 
 from datetime import datetime, timedelta
-
 
 def add_duration_to_datetime(
     datetime_str, duration=0, unit="days", input_format="%Y-%m-%d"
@@ -149,6 +157,11 @@ def add_duration_to_datetime(
 def set_reminder(content, timestamp):
     print(f"----\nSetting the following reminder for {timestamp}:\n{content}\n----")
 
+def get_current_date_time(date_format="%Y-%m-%d %H:%M:%S"):
+    """Returns the current date and time in the specified format."""
+    if not date_format:
+        raise ValueError("Date format cannot be empty")
+    return datetime.now().strftime(date_format)
 
 add_duration_to_datetime_schema = {
     "name": "add_duration_to_datetime",
@@ -196,43 +209,6 @@ set_reminder_schema = {
     },
 }
 
-batch_tool_schema = {
-    "name": "batch_tool",
-    "description": "Invoke multiple other tool calls simultaneously",
-    "input_schema": {
-        "type": "object",
-        "properties": {
-            "invocations": {
-                "type": "array",
-                "description": "The tool calls to invoke",
-                "items": {
-                    "type": "object",
-                    "properties": {
-                        "name": {
-                            "type": "string",
-                            "description": "The name of the tool to invoke",
-                        },
-                        "arguments": {
-                            "type": "string",
-                            "description": "The arguments to the tool, encoded as a JSON string",
-                        },
-                    },
-                    "required": ["name", "arguments"],
-                },
-            }
-        },
-        "required": ["invocations"],
-    },
-}
-
-from anthropic.types import ToolParam
-
-def get_current_date_time(date_format="%Y-%m-%d %H:%M:%S"):
-    """Returns the current date and time in the specified format."""
-    if not date_format:
-        raise ValueError("Date format cannot be empty")
-    return datetime.now().strftime(date_format)
-
 get_current_date_time_schema = ToolParam({
     "name": "get_current_date_time",
     "description": "Get the current date and time in the specified format.",
@@ -250,6 +226,7 @@ get_current_date_time_schema = ToolParam({
 })
 
 messages = []
-add_user_message(messages, "What is the exact time right now, formatted as HH:MM?, Also, what is the current time in SS format?")
+add_user_message(messages, "Set a reminder for my claude exam, It is exactly 177 days from today, at 10:30")
 
 run_conversation(messages)
+print(messages)

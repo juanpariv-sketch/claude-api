@@ -1,0 +1,36 @@
+[
+    {'role': 'user', 'content': 'What is the exact time right now, formatted as HH:MM?, Also, what is the current time in SS format?'},
+    {'role': 'assistant', 'content': [
+        ThinkingBlock(
+            signature='CAQSowUKEAgUGAI4AUIIdGhpbmtpbmcSDDTUpkQohzQumqYj3RoMWJ343lRuBs6FoxV3IjB2CWv+/FG4a0sbKFS7l9/ELVzh3gt9VG3hSK55NQfSe6xCsSFdLfUMUGzSjH4WN48qwAQcWJafMXVu0tVNJV7uiMNbyPlQDCZ7RJtHsUDYt8ClqbphcN4r+HmpGEWr80pi3RPoO5RATrkym720bs0o3Trulr+GL1ZwXUcabi+2vne7I+qNSlt830W6S25VjHSf+OCteNVfWSXo8Y4rmAlVItzYsUaFJeCPohY4S7GlCpg7BbpeN5wiuHobDIBlskv5brSEysqtfF3yaEIOTOgReNw0dpa+mQYLL9DhpcjSyig7y+2845bINEPUj+8i8HjUq+DEMZhJioR8/1joCOKGFVbKr2CV1SWeuqCAXbOEyejuGsuto9R6/nnKKKevJQmsYp1YBuwGkkmWmPGAK2zIyUG7GZOWJOG8Uc6o+f6P3KTLtM0Te9IVHXPWQiN52DA0p+z42hsaCzNsOoUTlaYr47LHpLG2XjQ+JLrn4nMmOKt+OR6Io+FiC2WYkmPcHwNZe0JkPPmpdpBqdkN/HkB6HSKgD54cymM74whgUO1MGPggVz81200Bbk5epEC7TgBg0nQQmc9mOAwZMGEE/H4T3158ejNRROd4Pm6uJhC7rP3Q86LQN18D5hP3Mu1GvTGEIq8HcEclaIHV9aqLudMk9x8Im2Yoh7EfLDDHzulFoLTGxgv5XJiHuwlS2uYDV7Dm6GGklp7IeU8bA4DfiILW5V6rmnru4GI2Z55VktjJWtKrd+Aw/uaL7LoIARcGWcr32O29iiVXUhHxnzes1Ir3nGgbzqqilpEVMj+S/dmPRJd4YVVWEmdQUp8bZ7W23jTrqdoYAQ==',
+            thinking='', type='thinking'), 
+        ToolUseBlock(
+            id='toolu_01PE4pfMpMAsx1c2QXWJwwRx',
+            caller=DirectCaller(type='direct'),
+            input={'date_format': '%H:%M'},
+            name='get_current_date_time',
+            type='tool_use',
+            toolset_name=None),
+        ToolUseBlock(
+            id='toolu_01HTrKGJvmDjxvGfCGm1xiw5',
+            caller=DirectCaller(type='direct'),
+            input={'date_format': '%S'},
+            name='get_current_date_time',
+            type='tool_use',
+            toolset_name=None)
+        ]
+    }, 
+    {'role': 'user', 'content': [
+        {'type': 'tool_result', 'tool_use_id': 'toolu_01PE4pfMpMAsx1c2QXWJwwRx', 'content': '"16:58"', 'is_error': False},
+        {'type': 'tool_result', 'tool_use_id': 'toolu_01HTrKGJvmDjxvGfCGm1xiw5', 'content': '"00"', 'is_error': False}
+        ]
+    },
+    {'role': 'assistant', 'content': [
+        TextBlock(
+            citations=None, 
+            text='The current time is **16:58** (HH:MM), and the seconds value is **00** (SS).\n\nSince these were two separate lookups, the seconds value reflects the moment the second request ran, so it may not match the exact second shown in the first.',
+            type='text'
+            )
+        ]
+    }
+]
